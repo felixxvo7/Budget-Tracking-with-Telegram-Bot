@@ -73,7 +73,8 @@ def summarize_total(type , file_path):
     else:        
         raise ValueError("Invalid type. Expected 'expense' or 'income'.")
     return amounts
-    
+
+#Function to sum by category
 def summarize_by_category(file_path):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
