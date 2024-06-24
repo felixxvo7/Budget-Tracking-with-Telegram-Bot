@@ -12,6 +12,7 @@ class Expense(Base):
     id = Column(Integer, primary_key=True,autoincrement=True)
     date = Column ("date", Date,nullable=False)
     category = Column("category", CHAR,nullable=False)
+    reason = Column("reason", String, nullable= False )
     amount = Column("amount",Float, nullable=False)
     note = Column("note", String, nullable= True )
 
@@ -57,4 +58,5 @@ a = add_expense("G", "Food", 41.5,"Lunch")
 b= add_expense("B", "Transport", 150,"No additional note" )
 a1 = add_expense("G", "Food", 141.5,"Food for meeeeee <3")
 b1= add_expense("B", "Rent", 550,"homing note" )
-
+print(a)
+print(b)
