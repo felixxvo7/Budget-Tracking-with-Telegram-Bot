@@ -1,5 +1,5 @@
-from Classes import Expense
-from Classes import Income
+from Expense import Expense
+from Income import Income
 import telebot
 from telebot import types
 import os

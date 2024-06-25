@@ -2,8 +2,8 @@ import telebot
 from telebot import types
 import os
 from dotenv import load_dotenv
-from Classes import Expense
-from Classes import Income
+from Expense import Expense, add_expense
+from Income import Income, add_income
 from Methods import save_expense_to_file, save_income_to_file, summarize_by_category, summarize_total
 from datetime import date
 load_dotenv()
@@ -111,23 +111,16 @@ def process_spend_command(message):
         #cast amount 
         amount = float(amount)
 
-        #record date
-        today = date.today()
-
         # create new expense:
-        new_expense = Expense(
-            date = today,
-            category = category,
-            reason = reason,
-            amount = amount,
-            note = note
-        )
+        new_expense = add_expense(
+                        category=category,
+                        reason= reason,
+                        amount= amount,
+                        note = note)
 
-        save_expense_to_file(new_expense,expense_file)
         #send formatted message to user
         bot.send_message(message.chat.id,new_expense)
-        summary = summarize_total("expense" , expense_file)
-        bot.send_message(message.chat.id,f"Total Expenses: {summary}")
+        
     except ValueError as e:
         # Error message in process_spend_command
         bot.send_message(message.chat.id, f"Error: {e}\n"
@@ -153,7 +146,7 @@ def process_earn_command(message):
             raise ValueError("Invalid number of fields!")
         
         # Split the user data into reason and amount
-        reason, amount = user_data[:2]
+        source, amount = user_data[:2]
         note = user_data[2] if len(user_data) == 3 else "No additional note"
 
         # Handling error for Amount field:
@@ -162,21 +155,15 @@ def process_earn_command(message):
         
         #cast amount 
         amount = float(amount)
-        #record date
-        today = date.today()
 
         # create new income:
-        new_income = Income(
-            date = today ,
-            reason = reason,
+        new_income = add_income(
+            source = source,
             amount = amount,
             note = note
         )
-        save_income_to_file(new_income,income_file)
         # Send a message to the user with the earned information
         bot.send_message(message.chat.id,new_income)
-        income_summary = summarize_total("income" , income_file)
-        bot.send_message(message.chat.id,f"Total Income: {income_summary}")
     except ValueError as e:
         # Send an error message to the user if they provided the wrong number of values
         bot.send_message(message.chat.id,f"Error: {e} \n" "Please provide the information in the correct format: '/e earned from, amount, note'.")
