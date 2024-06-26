@@ -2,8 +2,8 @@ import telebot
 from telebot import types
 import os
 from dotenv import load_dotenv
-from Expense import Expense, add_expense
-from Income import Income, add_income
+from Expense import Expense, add_expense, expense_summarize_monthly, summarize_monthly
+from Income import Income, add_income, income_summarize_monthly
 from Methods import save_expense_to_file, save_income_to_file, summarize_by_category, summarize_total
 from datetime import date
 load_dotenv()
@@ -12,8 +12,6 @@ bot_name = os.getenv('NAMEBUDGET')
 BOT_TOKEN = key
 BOT_USERNAME = bot_name
 bot = telebot.TeleBot(BOT_TOKEN)
-expense_file = "expenses.csv"
-income_file = "income.csv"
 
 # Hello and welcome the user when start the conversation.
 @bot.message_handler(commands=['start', 'hello','hi'])
@@ -168,23 +166,14 @@ def process_earn_command(message):
         # Send an error message to the user if they provided the wrong number of values
         bot.send_message(message.chat.id,f"Error: {e} \n" "Please provide the information in the correct format: '/e earned from, amount, note'.")
 
-@bot.message_handler(commands=['summarize'])
-def summary_command(message):
-    list_category_summary = summarize_by_category(expense_file)
-    category_dict = {
-            "G" : "Groceries",
-            "B" : "Bill and Housing",
-            "F" : "Fun (Shopping and Eating out)",
-            "W" : "Wellness (Education and Health)",
-            "M" : "Miscellaneous"
-        }
-    for key, amount in list_category_summary.items():
-        amount = float(amount)
-        bot.send_message(message.chat.id,f"  {category_dict[key]}: {amount:.2f}")
-    summary = summarize_total("expense" , expense_file)
-    bot.send_message(message.chat.id,f"  Total expenses: {summary}")
+@bot.message_handler(commands=['/ExpenseSum'])
+def expense_summary_command(message):
+    bot.send_message(message.chat.id,expense_summarize_monthly())
+
+@bot.message_handler(commands=['/IncomeSum'])
+def expense_summary_command(message):
+    bot.send_message(message.chat.id,income_summarize_monthly())
         
 
 bot.polling()
 
-# database design! objevy relational manager, eg. PeeWee, SQLAlchemy -- Look at these two, and compare the advantages and disadvantages, talk to gpt
