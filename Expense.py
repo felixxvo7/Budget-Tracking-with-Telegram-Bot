@@ -44,6 +44,14 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+category_dict = {
+        "G": "Groceries",
+        "B": "Bill and Housing",
+        "F": "Fun (Shopping and Eating out)",
+        "W": "Wellness (Education and Health)",
+        "M": "Miscellaneous"
+    }
+
 def add_expense(category,reason,amount,note):
     new_expense = Expense(category=category,reason=reason,amount=amount,note=note)
     session.add(new_expense)
@@ -56,18 +64,32 @@ def export_expenses_to_csv():
     df.to_csv(expense_file, index=False)
 
 def expense_summarize_monthly():
+   """
+    Generates a monthly expense summary by category.
+
+    This function queries the database to retrieve the total amount spent in each category
+    for each month, and returns a string summarizing the results.
+
+    Parameters:
+    None
+
+    Returns:
+    str: A string summarizing the monthly expense by category.
+
+    Example:
+    >>> expense_summarize_monthly()
+    Monthly Expense Summary by Category:
+    Month: 2022-01, Category: Groceries, Total: $500.00
+    Month: 2022-01, Category: Bill and Housing, Total: $1500.00
+    Month: 2022-02, Category: Fun (Shopping and Eating out), Total: $200.00
+   ...
+    """
    summary = session.query(
       func.strftime("%Y-%m",Expense.date).label('month'),
       Expense.category,
       func.sum(Expense.amount).label('total_amount')
    ).group_by('month',Expense.category).all()
-   category_dict = {
-        "G": "Groceries",
-        "B": "Bill and Housing",
-        "F": "Fun (Shopping and Eating out)",
-        "W": "Wellness (Education and Health)",
-        "M": "Miscellaneous"
-    }
+   
    summary_str = "Monthly Expense Summary by Category:\n"
 
    for month, category, total_amount in summary:
@@ -75,5 +97,26 @@ def expense_summarize_monthly():
        
    return summary_str
 
-export_expenses_to_csv()
+def get_last_expense():
+    last_expenses =  session.query(Expense).order_by(Expense.id.desc()).limit(5).all()
+    result= []
+    for expense in last_expenses:
+        result.append({
+                f"Expense ID: {expense.id}\n"
+                f"Date: {expense.date}\n"
+                f"Category: {category_dict[expense.category]}\n"
+                f"Spending Reason: {expense.reason}\n"
+                f"Amount: {expense.amount}\n"
+                f"Note: {expense.note}"})
+    return result
 
+def expense_delete_by_id(id):
+    delete = session.query(Expense).filter(Expense.id == id).first()
+    if delete:
+        session.delete(delete)
+        session.commit()
+        return f"Expense with ID {id} deleted sucessfully."
+    else:
+        return f"No expense found with ID {id}."
+    
+export_expenses_to_csv()

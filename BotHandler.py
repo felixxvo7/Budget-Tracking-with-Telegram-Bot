@@ -2,8 +2,8 @@ import telebot
 from telebot import types
 import os
 from dotenv import load_dotenv
-from Expense import Expense, add_expense, expense_summarize_monthly, summarize_monthly
-from Income import Income, add_income, income_summarize_monthly
+from Expense import Expense, add_expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense
+from Income import Income, add_income, get_last_income, income_delete_by_id, income_summarize_monthly
 from Methods import save_expense_to_file, save_income_to_file, summarize_by_category, summarize_total
 from datetime import date
 load_dotenv()
@@ -58,6 +58,7 @@ def send_welcome(message):
     /earn  - Collect the your earning data
     /summarize - See expense summary by category
     /setbud- Set buget for each month
+    /view - show last 5 data in either Expense data or Income data
     /report- Report the summary of transactions for this month until now
     /view  - give Google Sheet link to view data
     """)
@@ -118,7 +119,7 @@ def process_spend_command(message):
 
         #send formatted message to user
         bot.send_message(message.chat.id,new_expense)
-        
+        bot.send_message(message.chat.id,"For more information about summary of your expenses: /ExpenseSum ")
     except ValueError as e:
         # Error message in process_spend_command
         bot.send_message(message.chat.id, f"Error: {e}\n"
@@ -162,18 +163,57 @@ def process_earn_command(message):
         )
         # Send a message to the user with the earned information
         bot.send_message(message.chat.id,new_income)
+        bot.send_message(message.chat.id,"For more information about summary of your income: /IncomeSum")
+        
     except ValueError as e:
         # Send an error message to the user if they provided the wrong number of values
         bot.send_message(message.chat.id,f"Error: {e} \n" "Please provide the information in the correct format: '/e earned from, amount, note'.")
 
-@bot.message_handler(commands=['/ExpenseSum'])
+@bot.message_handler(commands=['ExpenseSum'])
 def expense_summary_command(message):
     bot.send_message(message.chat.id,expense_summarize_monthly())
 
-@bot.message_handler(commands=['/IncomeSum'])
+@bot.message_handler(commands=['IncomeSum'])
 def expense_summary_command(message):
     bot.send_message(message.chat.id,income_summarize_monthly())
         
+@bot.message_handler(commands=['LastExpense'])
+def expense_preview(message):
+    last_expenses = get_last_expense()
+    for expense in last_expenses:
+        bot.send_message(message.chat.id,expense)
+
+@bot.message_handler(commands=['LastIncome'])
+def income_preview(message):
+    last_earnings = get_last_income()
+    for earning in last_earnings:
+        bot.send_message(message.chat.id,earning)
+
+@bot.message_handler(func=lambda message: message.text.startswith('/delete '))
+def delete_expense(message):
+    try:
+        user_data = message.text.split(" ")
+
+        if len(user_data) != 3:
+            raise ValueError("Invalid number of fields!")
+        
+        data_type, data_id = user_data[1:3]
+        result =""
+
+        if data_type == "I": result = income_delete_by_id(data_id)
+
+        elif data_type == "E": result = expense_delete_by_id(data_id)
+
+        else: raise ValueError("Invalid type of fields! Data type is either E or I ")
+
+        bot.send_message(message.chat.id,result)
+    except ValueError as e:
+        # Error message in process_spend_command
+        bot.send_message(message.chat.id, f"Error: {e}\n"
+        "Please provide the information in the correct format:\n'/delete (data type E or I) id'")
+
+        
+
 
 bot.polling()
 

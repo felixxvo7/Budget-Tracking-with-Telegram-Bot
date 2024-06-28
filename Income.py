@@ -62,4 +62,32 @@ def income_summarize_monthly():
        
    return summary_str
 
+
+def get_last_earning():
+    last_earning =  session.query(Income).order_by(Income.id.desc()).limit(5).all()
+    return last_earning
+
+
+def income_delete_by_id(id):
+    delete = session.query(Income).filter(Income.id == id).first()
+    if delete:
+        session.delete(delete)
+        session.commit()
+        return f"Income with ID {id} deleted sucessfully."
+    else:
+        return f"No Income found with ID {id}."
+
+def get_last_income():
+    last_earnings =  session.query(Income).order_by(Income.id.desc()).limit(5).all()
+    result= []
+    for earning in last_earnings:
+        result.append({
+                f"Earning ID: {earning.id}\n"
+                f"Date: {earning.date}\n"
+                f"Earned from: {earning.source}\n"
+                f"Amount: {earning.amount}\n"
+                f"Note: {earning.note}."})
+    return result
+ 
+
 export_income_to_csv()
