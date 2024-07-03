@@ -68,6 +68,7 @@ def get_last_earning():
     return last_earning
 
 
+
 def income_delete_by_id(id):
     delete = session.query(Income).filter(Income.id == id).first()
     if delete:

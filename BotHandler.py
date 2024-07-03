@@ -60,7 +60,6 @@ def send_welcome(message):
     /setbud- Set buget for each month
     /view - show last 5 data in either Expense data or Income data
     /report- Report the summary of transactions for this month until now
-    /view  - give Google Sheet link to view data
     """)
 
 # Collecting data
@@ -213,7 +212,60 @@ def delete_expense(message):
         "Please provide the information in the correct format:\n'/delete (data type E or I) id'")
 
         
+@bot.message_handler(func=lambda message: message.text.startswith('/setbud '))
+def set_budget_command(message):
+    try:
+        # split user data by commas
+        user_data = message.text[8:].split(', ') 
 
+        # check if 3 or 4 fields are provided
+        if  len(user_data) not in [1, 5]:
+            raise ValueError("Invalid number of fields!")
+
+        # assign fields to variables
+        bud_list =[]
+        bud_category = []
+        
+        for i in user_data:
+            i = i.strip()
+            budget = i.split(' ')
+            if budget != None:
+                bud_list.append(budget[1])
+                bud_category.append(budget[0])
+            else: 
+                raise ValueError("Syntax error!, please try again")
+            
+        
+        
+
+        # Handling error for Category field:
+        if category not in ['G', 'B', 'F', 'W', 'M']:
+            raise ValueError("""Invalid category. Category must be in: 
+                G - Groceries
+                B - Bill and Housing
+                F - Fun (Shopping and Eating out)
+                W - Wellness (Education and Health)
+                M - Miscellaneous """) 
+
+        # Handling error for Amount field:
+        if not amount.replace('.','',1).isdigit():
+            raise ValueError("Invalid amount!")
+
+        
+        #cast amount 
+        amount = float(amount)
+
+        # create new expense:
+        new_expense = add_expense(
+                        category=category,
+                        reason= reason,
+                        amount= amount,
+                        note = note)
+
+    except ValueError as e:
+        # Error message in process_spend_command
+        bot.send_message(message.chat.id, f"Error: {e}\n"
+        "Please provide the information in the correct format:\n'/delete (data type E or I) id'")
 
 bot.polling()
 
