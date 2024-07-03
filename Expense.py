@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import date
+from Budget import Budget
 import pandas as pd
 Base = declarative_base()
 expense_file = "exported_expenses.csv"
@@ -38,6 +39,9 @@ class Expense(Base):
                 f"Amount: {self.amount}\n"
                 f"Note: {self.note}")
     
+    
+
+    
 engine = create_engine('sqlite:///expenses.db', echo=True)
 Base.metadata.create_all(bind=engine)
 
@@ -51,7 +55,42 @@ category_dict = {
         "W": "Wellness (Education and Health)",
         "M": "Miscellaneous"
     }
+def spend_command(message):
+        # split user data by commas
+        user_data = message.text[3:].split(', ') 
 
+        # check if 3 or 4 fields are provided
+        if  len(user_data) not in [3, 4]:
+            raise ValueError("Invalid number of fields!")
+
+        # assign fields to variables
+        category, reason, amount = user_data[:3]
+        note = user_data[3] if len(user_data) == 4 else "No additional note" 
+        
+        # Handling error for Category field:
+        if category not in ['G', 'B', 'F', 'W', 'M']:
+            raise ValueError("""Invalid category. Category must be in: 
+                G - Groceries
+                B - Bill and Housing
+                F - Fun (Shopping and Eating out)
+                W - Wellness (Education and Health)
+                M - Miscellaneous """) 
+
+        # Handling error for Amount field:
+        if not amount.replace('.','',1).isdigit():
+            raise ValueError("Invalid amount!")
+
+        
+        #cast amount 
+        amount = float(amount)
+
+        # create new expense:
+        new_expense = add_expense(
+                        category=category,
+                        reason= reason,
+                        amount= amount,
+                        note = note)
+        return new_expense
 def add_expense(category,reason,amount,note):
     new_expense = Expense(category=category,reason=reason,amount=amount,note=note)
     session.add(new_expense)
@@ -118,5 +157,6 @@ def expense_delete_by_id(id):
         return f"Expense with ID {id} deleted sucessfully."
     else:
         return f"No expense found with ID {id}."
-    
+
+
 export_expenses_to_csv()

@@ -37,6 +37,34 @@ Base.metadata.create_all(bind=engine)
 
 Session = sessionmaker(bind=engine)
 session = Session()
+def earn_command(message):
+    # Get user data 
+        user_data = message.text[3:].split(', ')
+    
+        # Check if the user provided 2 values
+        if len(user_data) not in [2,3]:
+            raise ValueError("Invalid number of fields!")
+        
+        # Split the user data into reason and amount
+        source, amount = user_data[:2]
+        note = user_data[2] if len(user_data) == 3 else "No additional note"
+
+        # Handling error for Amount field:
+        if not amount.replace('.','',1).isdigit():
+            raise ValueError("Invalid amount!")
+        
+        #cast amount 
+        amount = float(amount)
+
+        # create new income:
+        new_income = add_income(
+            source = source,
+            amount = amount,
+            note = note
+        )
+
+        return new_income
+
 
 def add_income(source,amount,note):
     new_income= Income(source=source,amount=amount,note=note)

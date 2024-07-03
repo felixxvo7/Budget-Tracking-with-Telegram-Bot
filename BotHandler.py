@@ -2,8 +2,9 @@ import telebot
 from telebot import types
 import os
 from dotenv import load_dotenv
-from Expense import Expense, add_expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense
-from Income import Income, add_income, get_last_income, income_delete_by_id, income_summarize_monthly
+from Budget import Budget
+from Expense import Expense, add_expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense, spend_command
+from Income import Income, add_income, earn_command, get_last_income, income_delete_by_id, income_summarize_monthly
 from Methods import save_expense_to_file, save_income_to_file, summarize_by_category, summarize_total
 from datetime import date
 load_dotenv()
@@ -60,7 +61,6 @@ def send_welcome(message):
     /setbud- Set buget for each month
     /view - show last 5 data in either Expense data or Income data
     /report- Report the summary of transactions for this month until now
-    /view  - give Google Sheet link to view data
     """)
 
 # Collecting data
@@ -82,41 +82,8 @@ def prompt_spend(message):
 @bot.message_handler(func=lambda message: message.text.startswith('/s '))
 def process_spend_command(message):
     try:
-        # split user data by commas
-        user_data = message.text[3:].split(', ') 
-
-        # check if 3 or 4 fields are provided
-        if  len(user_data) not in [3, 4]:
-            raise ValueError("Invalid number of fields!")
-
-        # assign fields to variables
-        category, reason, amount = user_data[:3]
-        note = user_data[3] if len(user_data) == 4 else "No additional note" 
+        new_expense = spend_command(message)
         
-        # Handling error for Category field:
-        if category not in ['G', 'B', 'F', 'W', 'M']:
-            raise ValueError("""Invalid category. Category must be in: 
-                G - Groceries
-                B - Bill and Housing
-                F - Fun (Shopping and Eating out)
-                W - Wellness (Education and Health)
-                M - Miscellaneous """) 
-
-        # Handling error for Amount field:
-        if not amount.replace('.','',1).isdigit():
-            raise ValueError("Invalid amount!")
-
-        
-        #cast amount 
-        amount = float(amount)
-
-        # create new expense:
-        new_expense = add_expense(
-                        category=category,
-                        reason= reason,
-                        amount= amount,
-                        note = note)
-
         #send formatted message to user
         bot.send_message(message.chat.id,new_expense)
         bot.send_message(message.chat.id,"For more information about summary of your expenses: /ExpenseSum ")
@@ -137,30 +104,7 @@ def prompt_earn(message):
 @bot.message_handler(func=lambda message: message.text.startswith('/e '))
 def process_earn_command(message):
     try:
-        # Get user data 
-        user_data = message.text[3:].split(', ')
-    
-        # Check if the user provided 2 values
-        if len(user_data) not in [2,3]:
-            raise ValueError("Invalid number of fields!")
-        
-        # Split the user data into reason and amount
-        source, amount = user_data[:2]
-        note = user_data[2] if len(user_data) == 3 else "No additional note"
-
-        # Handling error for Amount field:
-        if not amount.replace('.','',1).isdigit():
-            raise ValueError("Invalid amount!")
-        
-        #cast amount 
-        amount = float(amount)
-
-        # create new income:
-        new_income = add_income(
-            source = source,
-            amount = amount,
-            note = note
-        )
+        new_income = earn_command(message)
         # Send a message to the user with the earned information
         bot.send_message(message.chat.id,new_income)
         bot.send_message(message.chat.id,"For more information about summary of your income: /IncomeSum")
@@ -213,7 +157,18 @@ def delete_expense(message):
         "Please provide the information in the correct format:\n'/delete (data type E or I) id'")
 
         
+@bot.message_handler(func=lambda message: message.text.startswith('/setbud '))
+def set_budget_command(message):
+    try:
+        budget = Budget(message)
+        budget.parse_message()
+        bot.send_message(message.chat.id, f"Budget is set with:\n{budget.get_budget_summary()}")
+        bot.send_message(message.chat.id, f"Total budget set: {budget.get_total_budget()}")
 
+    except ValueError as e:
+        # Error message in process_spend_command
+        bot.send_message(message.chat.id, f"Error: {e}\n"
+        "Please provide the information in the correct format:\n'/setbud G int, B int, F int, W int, M int '")
 
 bot.polling()
 
