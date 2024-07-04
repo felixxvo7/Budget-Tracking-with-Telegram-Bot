@@ -11,3 +11,15 @@ id,date,category,reason,amount,note
 10,2024-06-26,B,Apple Music,10.99,testing
 11,2024-07-03,B,Apple Music,10.99,testing
 12,2024-07-03,F,Starbucks,3.49,testing 1
+13,2024-07-03,F,Starbucks,3.49,testing 2
+14,2024-07-04,F,Starbucks,3.49,testing 2
+15,2024-07-04,F,Starbucks,3.49,testing 2
+16,2024-07-04,F,Starbucks,3.49,testing 2
+17,2024-07-04,F,Noodle,14.49,w friends
+18,2024-07-04,F,Noodle,14.49,w friends
+19,2024-07-04,F,Coffee,3.49,SB
+20,2024-07-04,F,Coffee,3.49,SB
+21,2024-07-04,F,Coffee,3.49,SB
+22,2024-07-04,G,Save on food ,9.49,SB
+23,2024-07-04,G,Save on food ,0.01,
+24,2024-07-04,G,Save on food ,0.01,

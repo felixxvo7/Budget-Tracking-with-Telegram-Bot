@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Float, Date, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from datetime import date
-from Budget import Budget
+from datetime import date, datetime
+from Budget import Budget, get_budget
 import pandas as pd
 Base = declarative_base()
 expense_file = "exported_expenses.csv"
@@ -39,7 +39,11 @@ class Expense(Base):
                 f"Amount: {self.amount}\n"
                 f"Note: {self.note}")
     
+    def get_category(self):
+        return self.category
     
+    def get_amount(self):
+        return self.amount
 
     
 engine = create_engine('sqlite:///expenses.db', echo=True)
@@ -158,5 +162,38 @@ def expense_delete_by_id(id):
     else:
         return f"No expense found with ID {id}."
 
+def get_budget_message(category, amount):
+
+    budget_dict, budget_total = get_budget()
+
+    if category in budget_dict:
+        budget_value = budget_dict[category]
+
+
+    sort_by_category = session.query(
+        func.sum(Expense.amount).label('total_amount')
+    ).filter(
+        func.strftime("%Y-%m", Expense.date) == datetime.now().strftime("%Y-%m"),
+        Expense.category == category
+    ).all()
+
+    recorded_by_category = sort_by_category[0][0] if sort_by_category[0][0] is not None else 0
+
+    total_budget = session.query(
+        func.sum(Expense.amount).label('total_amount')
+    ).filter(
+        func.strftime("%Y-%m", Expense.date) == datetime.now().strftime("%Y-%m"),
+    ).all()
+
+    recorded_total = total_budget[0][0] if total_budget[0][0] is not None else 0
+
+    recorded_by_category = round(recorded_by_category, 2)
+    category_diff = budget_value - (recorded_by_category + amount)
+    total_diff = budget_total - (recorded_total + amount)
+
+
+    return_str = f" Category Budget Remaining {category_diff}\nTotal Budget Remaining {total_diff}"
+
+    return return_str
 
 export_expenses_to_csv()
