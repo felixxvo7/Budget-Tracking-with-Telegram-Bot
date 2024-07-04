@@ -107,26 +107,7 @@ def export_expenses_to_csv():
     df.to_csv(expense_file, index=False)
 
 def expense_summarize_monthly():
-   """
-    Generates a monthly expense summary by category.
-
-    This function queries the database to retrieve the total amount spent in each category
-    for each month, and returns a string summarizing the results.
-
-    Parameters:
-    None
-
-    Returns:
-    str: A string summarizing the monthly expense by category.
-
-    Example:
-    >>> expense_summarize_monthly()
-    Monthly Expense Summary by Category:
-    Month: 2022-01, Category: Groceries, Total: $500.00
-    Month: 2022-01, Category: Bill and Housing, Total: $1500.00
-    Month: 2022-02, Category: Fun (Shopping and Eating out), Total: $200.00
-   ...
-    """
+   
    summary = session.query(
       func.strftime("%Y-%m",Expense.date).label('month'),
       Expense.category,
@@ -195,5 +176,46 @@ def get_budget_message(category, amount):
     return_str = f" Category Budget Remaining {category_diff}\nTotal Budget Remaining {total_diff}"
 
     return return_str
+def check_budget():
+    budget_dict, budget_total = get_budget()
+
+    results = session.query(
+    Expense.category,
+    func.sum(Expense.amount).label('total_amount')
+    ).filter(
+    func.strftime("%Y-%m", Expense.date) == datetime.now().strftime("%Y-%m")
+    ).group_by(
+    Expense.category
+    ).all()
+
+    totals_by_category = {category: total_amount for category, total_amount in results}
+
+    total_budget = session.query(
+        func.sum(Expense.amount).label('total_amount')
+    ).filter(
+        func.strftime("%Y-%m", Expense.date) == datetime.now().strftime("%Y-%m"),
+    ).all()
+
+    recorded_total = total_budget[0][0] if total_budget[0][0] is not None else 0
+
+    summary = session.query(
+      func.strftime("%Y-%m",Expense.date).label('month'),
+      Expense.category,
+      func.sum(Expense.amount).label('total_amount')
+   ).group_by('month',Expense.category).all()
+   
+    summary_str = "Monthly Expense Summary by Category:\n"
+
+    for month, category, total_amount in summary:
+       recorded_amount = 0
+       if category in list(totals_by_category.keys()):
+           recorded_amount = totals_by_category[category]
+       amount_by_category = budget_dict[category] - recorded_amount
+       summary_str += f"Month: {month}, Category: {category_dict[category]}, Remaining Total: ${amount_by_category:.2f}\n"
+
+    total_remaining = budget_total - recorded_total 
+    summary_str += f"\nTotal Budget Remaining: {total_remaining:.2f}"
+
+    return summary_str
 
 export_expenses_to_csv()

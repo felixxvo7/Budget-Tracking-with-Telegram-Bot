@@ -3,8 +3,8 @@ from telebot import types
 import os
 from dotenv import load_dotenv
 from Budget import Budget, BudgetManager
-from Expense import Expense, add_expense, expense_delete_by_id, expense_summarize_monthly, get_budget_message, get_last_expense, spend_command
-from Income import Income, add_income, earn_command, get_last_income, income_delete_by_id, income_summarize_monthly
+from Expense import Expense, check_budget, expense_delete_by_id, expense_summarize_monthly, get_budget_message, get_last_expense, spend_command
+from Income import Income, earn_command, get_last_income, income_delete_by_id, income_summarize_monthly
 from datetime import date
 # Load environment variables from a .env file
 load_dotenv()
@@ -66,6 +66,7 @@ def send_welcome(message):
                  "/last_expense - To view last 5 transactions of Expense \n" \
                  "/last_income - To view last 5 transactions of Income \n" \
                  "/view - show last 5 transactions in either Expense data or Income data \n" \
+                 "/check_budget - show me the remaining budget for all category current month"\
                  "/report- Report the summary of transactions for this month until now"
     bot.reply_to(message, start_text)
 
@@ -73,6 +74,7 @@ def send_welcome(message):
 #Prompts the user to provide spending information.
 @bot.message_handler(commands=['spend'])
 def prompt_spend(message):
+
     bot.send_message(message.chat.id, """Sure! Please use the /s command with the format:
     '/s category, spending reason, amount, note (optional)'.
 
@@ -204,6 +206,11 @@ def set_budget_command(message):
         # Error message in process_spend_command
         bot.send_message(message.chat.id, f"Error: {e}\n"
         "Please provide the information in the correct format:\n'/budget G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
+
+@bot.message_handler(commands=['checkbud'])
+def check_budget_command(message):
+    str_out = check_budget()
+    bot.reply_to(message, str_out)
 
 bot.polling()
 

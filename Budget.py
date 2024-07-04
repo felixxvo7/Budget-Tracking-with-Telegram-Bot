@@ -110,3 +110,6 @@ def get_budget():
         total_amount += budget.amount
 
     return budget_category, total_amount
+
+
+    
