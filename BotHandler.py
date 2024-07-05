@@ -193,6 +193,8 @@ def budget_command(message):
     budget_manager = BudgetManager()
     bot.reply_to(message, "Please enter your budget in the format: /setbud G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
 
+#Setup budget function handle /setbud command
+#Create new  object Budget evertime its called
 @bot.message_handler(func=lambda message: message.text.startswith('/setbud '))
 def set_budget_command(message):
     try:
@@ -206,7 +208,9 @@ def set_budget_command(message):
         # Error message in process_spend_command
         bot.send_message(message.chat.id, f"Error: {e}\n"
         "Please provide the information in the correct format:\n'/budget G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
-
+        
+#Check budget command
+#Show remaining budget by category and 
 @bot.message_handler(commands=['checkbud'])
 def check_budget_command(message):
     str_out = check_budget()

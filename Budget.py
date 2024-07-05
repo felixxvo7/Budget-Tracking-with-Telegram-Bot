@@ -5,6 +5,14 @@ from sqlalchemy.orm import sessionmaker
 # Define the SQLAlchemy Base
 Base = declarative_base()
 
+
+#Represents a budget entry in the database.
+"""
+Attributes:
+    id (int): Unique identifier for the budget entry.
+    category (str): Category of the budget entry (e.g. "G" for Groceries).
+    amount (float): Amount allocated to the budget category.
+"""
 class Budget(Base):
     __tablename__ = 'budget'
     
@@ -12,6 +20,7 @@ class Budget(Base):
     category = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
 
+    #Initializes a new Budget instance.
     def __init__(self, category, amount):
         self.category = category
         self.amount = amount
@@ -25,6 +34,7 @@ Session = sessionmaker(bind=engine)
 # Create a Session
 session = Session()
 
+#Manages a budget by parsing user input, storing data in a database, and providing summary information.
 class BudgetManager:
     category_list = ['G', 'B', 'F', 'W', 'M']
 
@@ -34,6 +44,7 @@ class BudgetManager:
         self.total_budget = 0
         self.bud_dict = {}
 
+    #Parses a user-provided message to extract budget information.
     def parse_message(self, message):
         if not message or len(message) < 8:
             raise ValueError("Invalid message!")
@@ -67,6 +78,7 @@ class BudgetManager:
         # Save to database
         self.save_to_db()
 
+    #Returns a summary of the budget in a message string format.
     def get_budget_summary(self):
         return (f"Groceries: {self.bud_list[0]}\n"
                 f"Bill and Housing: {self.bud_list[1]}\n"
@@ -74,12 +86,15 @@ class BudgetManager:
                 f"Wellness: {self.bud_list[3]}\n"
                 f"Miscellaneous: {self.bud_list[4]}")
 
+    #Returns total budget
     def get_total_budget(self):
         return self.total_budget
     
+    #Returns dictionary of the budget object carries
     def get_budget_dict(self):
         return self.bud_dict
     
+    #store data in the database
     def save_to_db(self):
         # Clear existing data
         session.query(Budget).delete()
@@ -89,18 +104,8 @@ class BudgetManager:
             session.add(budget_entry)
 
         session.commit()
-        
-    def load_from_db(self):
-        self.bud_list = []
-        self.bud_category = []
-        self.total_budget = 0
-        self.bud_dict = {}
-
-        budgets = session.query(Budget).all()
-        for budget in budgets:
-            self.bud_category.append(budget.category)
-            self.bud_list.append(budget.amount)
-
+    
+#Returns amount of budget in setup of category dict and total budget amount
 def get_budget():
     budget_category = {}
     budgets = session.query(Budget).all()
