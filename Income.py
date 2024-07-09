@@ -127,5 +127,3 @@ def get_last_income():
         })
     return result
 
-# Export the income data to a CSV file
-export_income_to_csv()

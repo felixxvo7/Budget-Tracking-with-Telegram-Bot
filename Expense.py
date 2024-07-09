@@ -267,5 +267,3 @@ def check_budget():
     summary_str += f"\nTotal Budget Remaining: ${total_remaining:.2f}"
 
     return summary_str
-
-export_expenses_to_csv()
