@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import date
-import pandas as pd
 
 # Create a base class for declarative class definitions
 Base = declarative_base()
@@ -85,10 +84,6 @@ def add_income(source, amount, note):
     session.commit()
     return new_income
 
-def export_income_to_csv():
-    """Exports the income table to a CSV file."""
-    df = pd.read_sql('income', con=engine)
-    df.to_csv(income_file, index=False)
 
 def income_summarize_monthly():
     """Summarizes monthly income."""

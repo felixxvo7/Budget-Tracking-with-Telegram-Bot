@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import date, datetime
 from Budget import Budget, get_budget
-import pandas as pd
 Base = declarative_base()
 expense_file = "exported_expenses.csv"
 
@@ -133,12 +132,6 @@ def add_expense(category,reason,amount,note):
     session.add(new_expense)
     session.commit()
     return new_expense
-
-# Function to extract SQL table to CSV file
-def export_expenses_to_csv():
-    df = pd.read_sql('expenses', con=engine)
-    df.to_csv(expense_file, index=False)
-
 
 def expense_summarize_monthly():
    """Summarizes monthly expenses by category."""
