@@ -31,6 +31,7 @@ def validate_data():
 
 #Return Cleaned Data in csv
 def return_clean_csv():
+    #call function
     validate_data()
     drop_na()
     remove_duplicates()
