@@ -1,5 +1,6 @@
 from Expense import Expense
 from Income import Income
+import matplotlib.pyplot as plt
 import os
 
 def save_expense_to_file(expense : Expense,ex_file_path):
@@ -9,3 +10,5 @@ def save_expense_to_file(expense : Expense,ex_file_path):
 def save_income_to_file(income : Income,in_file_path):
     with open(in_file_path,'a') as f:
         f.write(f"{income.date},{income.reason},{income.amount},{income.note}\n")
+
+

@@ -26,7 +26,7 @@ category_dict = {
 # Category-Specific Analysis
 #
 def get_budget_message(category):
-    """Generates a message about the remaining budget for a category and total budget."""
+    """Generates a message about the remaining budget for a category and total budget, and returns data in an array."""
     
     # Retrieve the budget dictionary and total budget from the get_budget function
     budget_dict, budget_total = get_budget()
@@ -56,7 +56,6 @@ def get_budget_message(category):
     # Retrieve the total amount spent, default to 0 if None
     recorded_total = total_budget[0][0] if total_budget[0][0] is not None else 0
     
-
     # Calculate the remaining budget for the specified category and the total budget
     category_diff = budget_value - (recorded_by_category)
     total_diff = budget_total - (recorded_total)
@@ -64,13 +63,20 @@ def get_budget_message(category):
     # Create the return message string with the remaining budget information
     return_str = f"Category Budget Remaining: {category_diff}\nTotal Budget Remaining: {total_diff}"
     
-    return return_str
+    # Add the array for the budget data
+    array_data = np.array([[
+        budget_value, 
+        recorded_by_category, 
+        category_diff, 
+        budget_total, 
+        recorded_total, 
+        total_diff
+    ]])
+    
+    return return_str, array_data
 
-#
-# Remaining Budget
-#
 def check_budget():
-    """Checks the remaining budget by category and total."""
+    """Checks the remaining budget by category and total, and returns data in an array."""
     # Retrieve the budget dictionary and total budget from the get_budget function
     budget_dict, budget_total = get_budget()
 
@@ -97,33 +103,31 @@ def check_budget():
     # Retrieve the total amount spent in the current month
     recorded_total = total_budget[0][0] if total_budget[0][0] is not None else 0
 
-    # Query the database to get the monthly expense summary grouped by category
-    summary = session.query(
-        func.strftime("%Y-%m", Expense.date).label('month'),
-        Expense.category,
-        func.sum(Expense.amount).label('total_amount')
-    ).group_by('month', Expense.category).all()
-
-    # Initialize the summary string
+    # Initialize the summary string and a list to hold category data
     summary_str = "Monthly Expense Summary by Category:\n"
+    category_data = []
 
     # Iterate through the summary results and calculate the remaining budget for each category
-    for month, category, total_amount in summary:
+    for category, total_amount in totals_by_category.items():
         recorded_amount = totals_by_category.get(category, 0)
-        amount_by_category = budget_dict[category] - recorded_amount
-        summary_str += f"Month: {month}, Category: {category_dict[category]},\nRemaining Total: ${amount_by_category:.2f}\n"
+        remaining_budget_category = budget_dict.get(category, 0) - recorded_amount
+        summary_str += f"Category: {category_dict.get(category, 'Unknown')}, Remaining Total: ${remaining_budget_category:.2f}\n"
+        
+        # Append the category data to the list
+        category_data.append([category, budget_dict.get(category, 0), recorded_amount, remaining_budget_category])
 
     # Calculate the total remaining budget
     total_remaining = budget_total - recorded_total
     summary_str += f"\nTotal Budget Remaining: ${total_remaining:.2f}"
 
-    return summary_str
+    # Convert the category data list to a NumPy array
+    category_data_array = np.array(category_data, dtype=object)
+    
+    return summary_str, category_data_array
 
 #
 # Overall Spending vs. Budget
 #
-import numpy as np
-
 def overall_spending_vs_budget():
     """Compares overall spending with the allocated budget and handles overspending."""
     # Retrieve the budget dictionary and total budget from the get_budget function
