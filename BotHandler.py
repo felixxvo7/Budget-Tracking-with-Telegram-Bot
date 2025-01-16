@@ -1,6 +1,7 @@
 import telebot
 from telebot import types
 import os
+from dash import dcc, html
 from dotenv import load_dotenv
 from Budget import Budget, BudgetManager, print_budget
 from Expense import Expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense, spend_command
@@ -9,7 +10,6 @@ from Data_Processing import check_budget, get_budget_message, overall_spending_v
 from datetime import date
 # Load environment variables from a .env file
 load_dotenv()
-
 # Retrieve the bot token and name from environment variables
 key = os.getenv('APIBUDGET')
 bot_name = os.getenv('NAMEBUDGET')
@@ -230,6 +230,12 @@ def check_budget_command(message):
     # Send the combined analysis message to the user
     bot.send_message(message.chat.id, overall_str)
     bot.send_message(message.chat.id, category_str)
-# Start polling to listen for messages
+
+@bot.message_handler(commands=['summarize'])
+def check_budget_command(message):
+    bot.send_message(message.chat.id, "Visit the Dash app for visual summaries: http://127.0.0.1:8057/")
+
+
 bot.polling()
+
 
