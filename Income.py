@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Float, Date, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from datetime import date
+from datetime import date, datetime
 
 # Create a base class for declarative class definitions
 Base = declarative_base()
@@ -42,7 +42,7 @@ engine = create_engine('sqlite:///income.db', echo=True)
 # Create all tables in the engine
 Base.metadata.create_all(bind=engine)
 
-# Create a configured "Session" class
+# Create a configured "Session" class .
 Session = sessionmaker(bind=engine)
 
 # Create a Session
@@ -85,11 +85,19 @@ def add_income(source, amount, note):
     return new_income
 
 
-def income_summarize_monthly():
+def income_summarize_monthly(year=None, month=None):
     """Summarizes monthly income."""
+    if year is None or month is None:
+        today = datetime.today()
+        year = today.year
+        month = today.month
+        
     summary = session.query(
         func.strftime("%Y-%m", Income.date).label('month'),
         func.sum(Income.amount).label('total_amount')
+    ).filter(
+        func.strftime("%Y", Income.date) == str(year),  # Filter by year
+        func.strftime("%m", Income.date) == f"{month:02}"  # Filter by month (zero-padded)
     ).group_by('month').all()
 
     summary_str = "Monthly Income Summary:\n"
@@ -126,4 +134,3 @@ def get_last_income():
             f"Note: {earning.note}."
         })
     return result
-

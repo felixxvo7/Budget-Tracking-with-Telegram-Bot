@@ -3,8 +3,9 @@ from telebot import types
 import os
 from dotenv import load_dotenv
 from Budget import Budget, BudgetManager
-from Expense import Expense, check_budget, expense_delete_by_id, expense_summarize_monthly, get_budget_message, get_last_expense, spend_command
+from Expense import Expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense, spend_command
 from Income import Income, earn_command, get_last_income, income_delete_by_id, income_summarize_monthly
+from Data_Processing import check_budget, get_budget_message
 from datetime import date
 # Load environment variables from a .env file
 load_dotenv()
@@ -56,7 +57,7 @@ def help_option(message):
 @bot.message_handler(commands=['help'])
 def send_welcome(message):
     start_text = "Welcome to the financial bot! Use the following commands to manage your finances: \n" \
-                 "/about - Tells you more about the bot \n" \
+                 "/about - Tell you more about the bot \n" \
                  "/spend - Collect your spending data \n" \
                  "/earn  - Collect your earning data \n" \
                  "/summarize - See expense summary by category \n" \
@@ -94,7 +95,7 @@ def process_spend_command(message):
         new_expense = spend_command(message)
         category = new_expense.get_category()
         amount = new_expense.get_amount()
-        report = get_budget_message(category , amount)
+        report = get_budget_message(category)
         #send formatted message to user
         bot.send_message(message.chat.id,new_expense)
         bot.send_message(message.chat.id,report)
