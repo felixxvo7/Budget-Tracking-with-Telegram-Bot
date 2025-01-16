@@ -235,7 +235,5 @@ def check_budget_command(message):
 def check_budget_command(message):
     bot.send_message(message.chat.id, "Visit the Dash app for visual summaries: http://127.0.0.1:8057/")
 
-
 bot.polling()
-
-
+    

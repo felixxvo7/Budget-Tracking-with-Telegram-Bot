@@ -4,7 +4,7 @@ import plotly.graph_objs as go
 import numpy as np
 from datetime import datetime
 import threading
-from BotHandler import bot  # Import your Telegram bot instance
+#from BotHandler import bot  # Import your Telegram bot instance
 from Expense import Expense
 from Budget import get_budget
 from Income import income_summarize_monthly
@@ -62,7 +62,7 @@ def visual_by_month():
                         labels=["Spent", "Remaining"],
                         values=[total_spent, remaining_budget],
                         hole=0.3,
-                        marker_colors=["orange", "lightblue"]
+                        marker_colors=["yellow", "lightblue"]
                     )
                 ],
                 "layout": go.Layout(
@@ -124,5 +124,5 @@ if __name__ == '__main__':
     
 
 print("Bot is running... Access Dash visualization at http://127.0.0.1:8050/")
-bot.polling()
+#bot.polling()
     
