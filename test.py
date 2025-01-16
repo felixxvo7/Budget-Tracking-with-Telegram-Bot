@@ -60,6 +60,7 @@ def visual_by_month():
             html.H1("Monthly Spending Summary", style={"textAlign": "center"}),
 
             dash_table.DataTable(
+                id="overall-summary-table",
                 columns=[
                     {"name": "Metric", "id": "Metric"},
                     {"name": "Value", "id": "Value"}
@@ -101,7 +102,7 @@ def visual_by_month():
                     }
                     for cat, budget, spent in zip(category_data[:, 0], category_budget, category_spent)
                 ],
-                style_table={"overflowX": "auto", "width": "100%", "margin": "auto"},
+                style_table={"overflowX": "auto", "width": "80%", "margin": "auto"},
                 style_header={"backgroundColor": "lightblue", "fontWeight": "bold", "textAlign": "center"},
                 style_cell={"textAlign": "center", "padding": "10px", "fontSize": "14px"},
             ),

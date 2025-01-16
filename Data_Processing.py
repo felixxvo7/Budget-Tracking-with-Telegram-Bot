@@ -168,12 +168,12 @@ def overall_spending_vs_budget():
 
 
 def category_spending_vs_budget():
-    """Compares spending by category with the allocated budget and handles overspending."""
+    """Compares spending by category with the allocated budget and includes all budgeted categories."""
     # Retrieve the budget dictionary and total budget from the get_budget function
     budget_dict, budget_total = get_budget()
 
     # Query the database to get the total amount spent in the current month by category
-    category_spent = session.query(
+    category_spent_query = session.query(
         Expense.category,
         func.sum(Expense.amount).label('total_amount')
     ).filter(
@@ -182,27 +182,29 @@ def category_spending_vs_budget():
         Expense.category
     ).all()
 
+    # Convert the query result to a dictionary for easier lookups
+    category_spent = {category: total_spent for category, total_spent in category_spent_query}
+
     # Initialize the message string and a list to store category data
     category_comparison_str = "Category Spending vs Budget:\n"
     category_data = []
 
-    for category, total_spent in category_spent:
-        # Retrieve the budget for the current category
-        budget_for_category = budget_dict.get(category, 0)
-        
+    # Iterate over all categories in the budget
+    for category, budget_for_category in budget_dict.items():
+        # Retrieve the total spent for this category (default to 0 if not in category_spent)
+        total_spent = category_spent.get(category, 0)
+
         # Calculate the percentage spent for the current category
-        if budget_for_category > 0:
-            percentage_spent = (total_spent / budget_for_category) * 100
-        else:
-            percentage_spent = 0
-        
+        percentage_spent = (total_spent / budget_for_category) * 100 if budget_for_category > 0 else 0
+
         # Check if the category is overspent
         if total_spent > budget_for_category:
             overspent_amount = total_spent - budget_for_category
             overspent_str = f"OVERSPENT! You have overspent by: ${overspent_amount:.2f}\n"
         else:
+            overspent_amount = 0
             overspent_str = "You are within the budget for this category.\n"
-        
+
         # Add category comparison information to the string
         category_comparison_str += f"Category: {category_dict.get(category, 'Unknown')}\n"
         category_comparison_str += f"Budgeted: ${budget_for_category:.2f}\n"
@@ -211,7 +213,13 @@ def category_spending_vs_budget():
         category_comparison_str += overspent_str + "\n"
 
         # Store the data in a list for output
-        category_data.append([category, budget_for_category, total_spent, percentage_spent, overspent_amount if total_spent > budget_for_category else 0])
+        category_data.append([
+            category, 
+            budget_for_category, 
+            total_spent, 
+            percentage_spent, 
+            overspent_amount
+        ])
 
     # Convert the list to a NumPy array for the category data
     category_data_array = np.array(category_data, dtype=object)

@@ -215,7 +215,7 @@ def set_budget_command(message):
 #Check budget command
 #Show remaining budget by category and 
 # Full Budget Analysis Command Handler
-@bot.message_handler(commands=['checkbud'])
+@bot.message_handler(commands=['check_budget'])
 def check_budget_command(message):
     str_out =  check_budget()
     bot.reply_to(message, str_out)
