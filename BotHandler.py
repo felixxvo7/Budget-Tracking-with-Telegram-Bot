@@ -2,10 +2,10 @@ import telebot
 from telebot import types
 import os
 from dotenv import load_dotenv
-from Budget import Budget, BudgetManager
+from Budget import Budget, BudgetManager, print_budget
 from Expense import Expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense, spend_command
 from Income import Income, earn_command, get_last_income, income_delete_by_id, income_summarize_monthly
-from Data_Processing import check_budget, get_budget_message
+from Data_Processing import check_budget, get_budget_message, overall_spending_vs_budget, category_spending_vs_budget
 from datetime import date
 # Load environment variables from a .env file
 load_dotenv()
@@ -192,7 +192,9 @@ def delete_expense(message):
 def budget_command(message):
     global budget_manager
     budget_manager = BudgetManager()
-    bot.reply_to(message, "Please enter your budget in the format: /setbud G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
+    get_report = print_budget()
+    bot.send_message(message.chat.id, get_report)
+    bot.send_message(message.chat.id, "Please enter your new budget in the format:\n/setbud G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
 
 #Setup budget function handle /setbud command
 #Create new  object Budget evertime its called
@@ -212,10 +214,22 @@ def set_budget_command(message):
         
 #Check budget command
 #Show remaining budget by category and 
+# Full Budget Analysis Command Handler
 @bot.message_handler(commands=['checkbud'])
 def check_budget_command(message):
-    str_out = check_budget()
+    str_out =  check_budget()
     bot.reply_to(message, str_out)
+    bot.send_message(message.chat.id, " Go to /budget_summarize to see more detailed budget summarize.")
+    
+@bot.message_handler(commands=['budget_summarize'])
+def check_budget_command(message):
+    """Handles the /checkbud command to provide budget analysis."""
+    overall_str, overall_data = overall_spending_vs_budget()
+    category_str, category_data = category_spending_vs_budget()
 
+    # Send the combined analysis message to the user
+    bot.send_message(message.chat.id, overall_str)
+    bot.send_message(message.chat.id, category_str)
+# Start polling to listen for messages
 bot.polling()
 

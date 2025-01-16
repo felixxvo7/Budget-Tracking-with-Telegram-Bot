@@ -117,4 +117,26 @@ def get_budget():
     return budget_category, total_amount
 
 
+def print_budget():
+    # Get the budget details from the database
+    budget_category, total_amount = get_budget()
     
+    # Format the budget for display
+    summary_str = "Current Budget Summary:\n"
+    for category, amount in budget_category.items():
+        # Convert the category to a more readable format
+        category_name = {
+            'G': 'Groceries',
+            'B': 'Bill and Housing',
+            'F': 'Fun (Shopping and Eating out)',
+            'W': 'Wellness (Education and Health)',
+            'M': 'Miscellaneous'
+        }.get(category, 'Unknown Category')  # Default to 'Unknown Category' if the category is not found
+        
+        # Add the category and amount to the summary string
+        summary_str += f"{category_name}: ${amount:.2f}\n"
+
+    # Add the total budget at the end
+    summary_str += f"Total Budget: ${total_amount:.2f}"
+
+    return summary_str
