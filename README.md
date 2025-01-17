@@ -100,8 +100,9 @@ installed.
 
 1.  Start the Telegram Bot Run the bot to interact with it on Telegram:
     python BotHandler.py
+2. Go to Telegram Bot through Telegram share link: https://t.me/trackingBudgetBot
 
-Command Description
+3. Command Description:
 
 /start Welcome message and bot introduction.
 
@@ -133,7 +134,7 @@ month
 /summarize Provides the Dash visualization link
 (<http://127.0.0.1:8057/>).
 
-2.  Start the Dash Visualization Run the Dash app to view
+4.  Start the Dash Visualization Run the Dash app to view
     visualizations: python Visualization/app.py
     -   Access the Dash app at <http://127.0.0.1:8057/>.
 
