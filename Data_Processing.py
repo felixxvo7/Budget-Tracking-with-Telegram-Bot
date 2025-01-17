@@ -22,9 +22,17 @@ category_dict = {
             "W" : "Wellness (Education and Health)",
             "M" : "Miscellaneous"
         }
-#
-# Category-Specific Analysis
-#
+
+
+"""
+    Generates a message about the remaining budget for a specific category and the overall budget.
+    
+    Args:
+        category (str): The category for which the remaining budget is being checked (e.g., "G" for Groceries).
+
+    Returns:
+        tuple: A string message with the remaining budget information and an array of budget data.
+"""
 def get_budget_message(category):
     """Generates a message about the remaining budget for a category and total budget, and returns data in an array."""
     
@@ -75,6 +83,14 @@ def get_budget_message(category):
     
     return return_str, array_data
 
+
+"""
+    Checks the remaining budget by category and overall, and returns a summary of the budget status.
+
+    Returns:
+        tuple: A summary string with budget information for each category and the overall budget,
+               and an array of data containing the budget details by category.
+"""
 def check_budget():
     """Checks the remaining budget by category and total, and returns data in an array."""
     # Retrieve the budget dictionary and total budget from the get_budget function
@@ -125,9 +141,14 @@ def check_budget():
     
     return summary_str, category_data_array
 
-#
-# Overall Spending vs. Budget
-#
+
+"""
+    Compares the overall spending for the month with the total budget and checks for overspending.
+
+    Returns:
+        tuple: A string with the overall budget vs spending comparison message, 
+               and an array of data with total budget, total spent, and overspending details.
+"""
 def overall_spending_vs_budget():
     """Compares overall spending with the allocated budget and handles overspending."""
     # Retrieve the budget dictionary and total budget from the get_budget function
@@ -167,6 +188,12 @@ def overall_spending_vs_budget():
     return overall_comparison_str, overall_data
 
 
+"""
+    Compares spending by category with the allocated budget for each category and handles overspending.
+
+    Returns:
+        tuple: A message with spending vs budget details for each category, and an array with category-wise data.
+"""
 def category_spending_vs_budget():
     """Compares spending by category with the allocated budget and includes all budgeted categories."""
     # Retrieve the budget dictionary and total budget from the get_budget function

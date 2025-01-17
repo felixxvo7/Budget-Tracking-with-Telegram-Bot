@@ -19,7 +19,9 @@ BOT_USERNAME = bot_name
 # Initialize the bot with the token
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# Hello and welcome the user when start the conversation.
+# Routine 1: Send a welcome message when the user starts a conversation
+# Input: User starts the conversation with '/start', '/hello', or '/hi'
+# Output: Sends a personalized welcome message with bot introduction
 @bot.message_handler(commands=['start', 'hello','hi'])
 def send_welcome(message):
     user_first_name = str(message.chat.first_name) 
@@ -35,7 +37,9 @@ For more information: /help 🤖"""
 
     bot.reply_to(message, welcoming )
     
-# Provides information about the bot and its features.
+# Routine 2: Provide information about the bot's features
+# Input: User sends '/about' command
+# Output: Sends a detailed message about the bot’s functionality
 @bot.message_handler(commands=['about'])
 def help_option(message):
     help_text ="""
@@ -53,7 +57,9 @@ def help_option(message):
     bot.send_message(message.chat.id, """All of this is designed for you to unleash the power of data-driven financial empowerment . Once in you life, you can finaly say: 'Financial freedom, here I come!' 
     For more information: /help """ )
 
- #Provides a list of available commands for the user.
+# Routine 3: Provide a list of available commands
+# Input: User sends '/help' command
+# Output: Sends a list of commands to guide user on how to use the bot
 @bot.message_handler(commands=['help'])
 def send_welcome(message):
     start_text = "Welcome to the financial bot! Use the following commands to manage your finances: \n" \
@@ -71,8 +77,9 @@ def send_welcome(message):
                  "/report- Report the summary of transactions for this month until now"
     bot.reply_to(message, start_text)
 
-# Collecting data
-#Prompts the user to provide spending information.
+# Routine 4: Ask the user to input spending data
+# Input: User sends '/spend' command
+# Output: Prompts user to input spending data with proper format using '/s'
 @bot.message_handler(commands=['spend'])
 def prompt_spend(message):
 
@@ -86,8 +93,9 @@ def prompt_spend(message):
         W - Wellness (Education and Health)
         M - Miscellaneous""")
 
-# Processes the user's spending data provided in the format '/s: categories, spending reason, amount'
-# message handler for spend command
+# Routine 5: Process the spending data provided by the user
+# Input: User sends a message starting with '/s' and provides spending data
+# Output: Processes the data, saves the spending entry, and sends a formatted response along with the budget message
 @bot.message_handler(func=lambda message: message.text.startswith('/s '))
 def process_spend_command(message):
     try:
@@ -105,15 +113,18 @@ def process_spend_command(message):
         bot.send_message(message.chat.id, f"Error: {e}\n"
         "Please provide the information in the correct format:\n'/s category, spending reason, amount, note'")
 
-# Collecting data
-# Used to ask about the information for the purpose to collect earning data
+# Routine 6: Ask the user to input earning data
+# Input: User sends '/earn' command
+# Output: Prompts user to input earning data with proper format using '/e'
 @bot.message_handler(commands=['earn'])
 def prompt_earn(message):
     bot.send_message(message.chat.id, """Sure! Please use the /e command with the format:
      '/e earned from, amount, note (optional)'.
     """)
 
-# Handle the earn command
+# Routine 7: Process the earning data provided by the user
+# Input: User sends a message starting with '/e' and provides earning data
+# Output: Processes the data, saves the earning entry, and sends a formatted response along with the income summary
 @bot.message_handler(func=lambda message: message.text.startswith('/e '))
 def process_earn_command(message):
     try:
@@ -126,43 +137,51 @@ def process_earn_command(message):
         # Send an error message to the user if they provided the wrong number of values
         bot.send_message(message.chat.id,f"Error: {e} \n" "Please provide the information in the correct format: '/e earned from, amount, note'.")
 
-# Handler for the /ExpenseSum command
-# Provides a sum of the recorded expenses
+# Routine 8: Provide a summary of expenses for the current month
+# Input: User sends '/expense_sum' command
+# Output: Sends a summary of expenses for the current month
 @bot.message_handler(commands=['expense_sum'])
 def expense_summary_command(message):
     bot.send_message(message.chat.id,expense_summarize_monthly())
 
 
-# Handler for the /IncomeSum command
-# Provides a sum of the recorded earnings
+# Routine 9: Provide a summary of earnings for the current month
+# Input: User sends '/income_sum' command
+# Output: Sends a summary of earnings for the current month
 @bot.message_handler(commands=['income_sum'])
 def expense_summary_command(message):
     bot.send_message(message.chat.id,income_summarize_monthly())
 
-# Handler for the /LastExpense command
-# Provides a preview of the last recorded expenses
+# Routine 10: Show the last recorded expenses
+# Input: User sends '/last_expense' command
+# Output: Sends the last 5 recorded expense entries
 @bot.message_handler(commands=['last_expense'])
 def expense_preview(message):
     last_expenses = get_last_expense()
     for expense in last_expenses:
         bot.send_message(message.chat.id, expense)
 
-# Handler for the /LastIncome command
-# Provides a preview of the last recorded incomes
+# Routine 11: Show the last recorded earnings
+# Input: User sends '/last_income' command
+# Output: Sends the last 5 recorded income entries
 @bot.message_handler(commands=['last_income'])
 def income_preview(message):
     last_earnings = get_last_income()
     for earning in last_earnings:
         bot.send_message(message.chat.id, earning)
 
+# Routine 12: Provides options to view last 5 transactions for Expenses or Income
+# Input: User sends '/view' command
+# Output: Sends a brief message with options to view last 5 transactions of Expenses or Income
 @bot.message_handler(commands=['view'])
 def preview_command(message):
     str_out = """To view last 5 transactions of Expenses: /last_expense 
-To view last 5 transactions of Income: /last_income                                                         """
+To view last 5 transactions of Income: /last_income """
     bot.send_message(message.chat.id, str_out)
 
-# Handler for the /delete command
-# Deletes an expense or income by ID
+# Routine 13: Deletes an expense or income entry by ID
+# Input: User sends '/delete' command with data type (E or I) and ID of the entry to be deleted
+# Output: Deletes the expense or income entry and sends confirmation message
 @bot.message_handler(func=lambda message: message.text.startswith('/delete '))
 def delete_expense(message):
     try:
@@ -186,8 +205,9 @@ def delete_expense(message):
         bot.send_message(message.chat.id, f"Error: {e}\n"
         "Please provide the information in the correct format:\n'/delete (data type E or I) id'")
 
-# Handler for the /setbud command
-# Sets a new budget with detailed parameters
+# Routine 14: Starts the process to set a new budget
+# Input: User sends '/budget' command
+# Output: Sends a prompt to enter new budget values in a specific format
 @bot.message_handler(commands=['budget'])
 def budget_command(message):
     global budget_manager
@@ -196,8 +216,9 @@ def budget_command(message):
     bot.send_message(message.chat.id, get_report)
     bot.send_message(message.chat.id, "Please enter your new budget in the format:\n/setbud G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
 
-#Setup budget function handle /setbud command
-#Create new  object Budget evertime its called
+# Routine 15: Process and save the new budget set by the user
+# Input: User sends the '/setbud' command with budget amounts
+# Output: Saves the budget details and sends confirmation and budget summary
 @bot.message_handler(func=lambda message: message.text.startswith('/setbud '))
 def set_budget_command(message):
     try:
@@ -212,15 +233,18 @@ def set_budget_command(message):
         bot.send_message(message.chat.id, f"Error: {e}\n"
         "Please provide the information in the correct format:\n'/budget G <amount>, B <amount>, F <amount>, W <amount>, M <amount>")
         
-#Check budget command
-#Show remaining budget by category and 
-# Full Budget Analysis Command Handler
+# Routine 16: Check and display the remaining budget for each category
+# Input: User sends '/check_budget' command
+# Output: Sends the remaining budget by category
 @bot.message_handler(commands=['check_budget'])
 def check_budget_command(message):
     str_out =  check_budget()
     bot.reply_to(message, str_out)
     bot.send_message(message.chat.id, " Go to /budget_summarize to see more detailed budget summarize.")
-    
+
+# Routine 17: Provide a comprehensive budget analysis (spending vs. budget)
+# Input: User sends '/budget_summarize' command
+# Output: Sends an analysis of overall spending and category-wise spending vs. budget
 @bot.message_handler(commands=['budget_summarize'])
 def check_budget_command(message):
     """Handles the /checkbud command to provide budget analysis."""
@@ -231,9 +255,13 @@ def check_budget_command(message):
     bot.send_message(message.chat.id, overall_str)
     bot.send_message(message.chat.id, category_str)
 
+# Routine 18: Provide a link to an external Dash app for financial summaries
+# Input: User sends '/summarize' command
+# Output: Sends a link to the Dash app for financial visual summaries
 @bot.message_handler(commands=['summarize'])
 def check_budget_command(message):
     bot.send_message(message.chat.id, "Visit the Dash app for visual summaries: http://127.0.0.1:8057/")
 
+# Start polling to receive messages from users
 bot.polling()
     
