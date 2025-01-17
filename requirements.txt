@@ -1,0 +1,6 @@
+dash==2.11.0
+dash-table==5.0.0
+plotly==5.17.0
+SQLAlchemy==2.0.18
+pandas==2.1.0
+numpy==1.26.0

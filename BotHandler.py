@@ -4,6 +4,7 @@ import os
 from dash import dcc, html
 from dotenv import load_dotenv
 from Budget import Budget, BudgetManager, print_budget
+from Visualization import visual_by_month
 from Expense import Expense, expense_delete_by_id, expense_summarize_monthly, get_last_expense, spend_command
 from Income import Income, earn_command, get_last_income, income_delete_by_id, income_summarize_monthly
 from Data_Processing import check_budget, get_budget_message, overall_spending_vs_budget, category_spending_vs_budget
@@ -260,6 +261,7 @@ def check_budget_command(message):
 # Output: Sends a link to the Dash app for financial visual summaries
 @bot.message_handler(commands=['summarize'])
 def check_budget_command(message):
+    visual_by_month()
     bot.send_message(message.chat.id, "Visit the Dash app for visual summaries: http://127.0.0.1:8057/")
 
 # Start polling to receive messages from users

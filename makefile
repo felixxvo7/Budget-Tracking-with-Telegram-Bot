@@ -4,9 +4,10 @@ BOT_HANDLER = BotHandler.py
 VISUALIZATION = Visualization.py
 
 # Target to run both the bot and visualization simultaneously
-run:
-	$(PYTHON) $(VISUALIZATION)& \
+run-bot:
 	$(PYTHON) $(BOT_HANDLER) 
+run-dash:
+	$(PYTHON) $(VISUALIZATION)
 
 # Clean up (optional, for temp files or logs)
 clean:
