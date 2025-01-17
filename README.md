@@ -76,6 +76,7 @@ against budgets, and analyze income vs expenses.
 
 -   Python 3.8 or later
 -   SQLite installed (if not already available)
+-   Read more in requirements.txt
 
 ## Installation
 
