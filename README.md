@@ -1,10 +1,4 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
-# Budget Tracking Dashboard
+# Personal Finance Tracker and Budget Visualization System
 
 The Monthly Budget Tracker is a financial management application
 designed to help users track their expenses, compare spending against a
