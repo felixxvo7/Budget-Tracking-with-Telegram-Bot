@@ -74,8 +74,7 @@ def send_welcome(message):
                  "/last_expense - To view last 5 transactions of Expense \n" \
                  "/last_income - To view last 5 transactions of Income \n" \
                  "/view - show last 5 transactions in either Expense data or Income data \n" \
-                 "/check_budget - show me the remaining budget for all category current month"\
-                 "/report- Report the summary of transactions for this month until now"
+                 "/check_budget - show me the remaining budget for all category current month"
     bot.reply_to(message, start_text)
 
 # Routine 4: Ask the user to input spending data
