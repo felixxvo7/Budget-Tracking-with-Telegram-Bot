@@ -1,22 +1,15 @@
 # Telegram Finance Tracker and Budget Visualization System
 
-The Monthly Budget Tracker is a financial management application
-designed to help users track their expenses, compare spending against a
-predefined budget, and visualize financial insights via a Dash-powered
-web interface.
+The Monthly Budget Tracker is a user-friendly financial management through Telegram Bot created to help users keep track of their expenses, compare spending with their budget, and providing visualizations and insights into their finance through Dash web interface.
 
-Additionally, it integrates with a Telegram bot for real-time data entry
-and summaries.
+This app is integrated with a Telegram bot, allowing users to easily enter data and receive summaries in real-time.
 
-This is a Dash-based application that provides a budget tracking
-dashboard. It allows users to visualize monthly spending, compare it
-against budgets, and analyze income vs expenses.
-
+This Dash-based website provides a clear, interactive dashboard where users can see and therefore control their monthly spending, compare it to their set budget, and analyze the balance between income and expenses or monthly summaries or category-specific analysis.
 ## Features
 
 **Telegram Bot**:
 
--   Enter income and expense data on the go.
+-   Enter income and expense or budget data and many commands.
 
 -   Check your monthly budget summary using commands.
 
