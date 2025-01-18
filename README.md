@@ -126,9 +126,6 @@ month
     visualizations: python Visualization/app.py
     -   Access the Dash app at <http://127.0.0.1:8057/>.
 
-### License
-
-This project is licensed under the MIT License.
 
 ### Author
 
