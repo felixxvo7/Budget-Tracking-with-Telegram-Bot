@@ -74,15 +74,26 @@ Open the dashboard report application in your browser:
 
 Navigate to <http://127.0.0.1:8057> in your web browser.
 
-Set up the SQLite database:
+## Project Structure
+```         
+Telegram-Finance-Tracker-and-Budget-Visualization-System/
+│
+├── BotHandler.py
+├── Clean_Data.py
+├── Data_Processing.py
+├── Budget.py     # Budget Class and Database Management
+├── Expense.py    # Expense Class and Database Management
+├── Income.py     # Income Class and Database Management
+├── Visualization.py
+```
+## Installation
 
-Ensure you have a database file named expenses.db in the project root.
-Populate the database with relevant tables and data using your schema. .
+Clone the repository: \`\`\`bash git clone
+    <https://github.com/felixxvo7/Budget-Tracking-Dashboard.git>
 
-Troubleshooting Ensure the SQLite database (expenses.db) is in the
-correct location and contains the necessary tables. If the app doesn't
-load, check the console for errors and verify that all dependencies are
-installed.
+Open the dashboard report application in your browser:
+
+Navigate to <http://127.0.0.1:8057> in your web browser.
 
 ## Running the Application
 
