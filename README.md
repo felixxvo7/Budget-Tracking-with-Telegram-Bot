@@ -64,6 +64,12 @@ This Dash-based website provides a clear, interactive dashboard where users can 
 -   Python 3.8 or later
 -   SQLite installed (if not already available)
 -   Read more in requirements.txt
+## Screenshots Preview:
+
+![Screenshot 2025-01-19 230304](https://github.com/user-attachments/assets/16d3a8af-90c4-4916-b8da-711274c76068)
+![Screenshot 2025-01-17 221039](https://github.com/user-attachments/assets/25bc3983-88f2-4b62-a741-989329d95716)
+![Screenshot 2025-01-17 221024](https://github.com/user-attachments/assets/35e4f2b1-c84e-442c-b093-fe8dad643f10)
+
 
 ## Installation
 
